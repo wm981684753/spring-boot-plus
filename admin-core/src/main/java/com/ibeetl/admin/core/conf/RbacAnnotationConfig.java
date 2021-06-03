@@ -6,8 +6,11 @@ import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -40,12 +43,25 @@ public class RbacAnnotationConfig {
 	ObjectMapper jsonMapper = new ObjectMapper();
 	private final Log log = LogFactory.getLog(this.getClass());
 
+	@Before("within(@org.springframework.stereotype.Controller *) && @annotation(function)")
+	public void myBefore(JoinPoint point,Function function){
+		System.out.println("之前执行Before---------------------");
+	}
+
+	@After("within(@org.springframework.stereotype.Controller *) && @annotation(function)")
+	public void myAfter(JoinPoint point,Function function){
+		System.out.println("之后执行After---------------------");
+	}
+
 	@org.aspectj.lang.annotation.Around("within(@org.springframework.stereotype.Controller *) && @annotation(function)")
 	public Object functionAccessCheck(final ProceedingJoinPoint pjp, Function function) throws Throwable {
+		System.out.println("此处权限验证-----------------------------------------------------------------------");
+		System.out.println("orgId:"+function.value());
 		// debug
 		String funCode = null;
 		CoreUser user = null;
 		Method m = null;
+
 		try {
 			
 			if (function != null) {

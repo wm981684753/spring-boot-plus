@@ -140,6 +140,7 @@ public class UserConsoleController {
 	@Function("user.update")
 	@ResponseBody
 	public JsonResult update(@Validated(ValidateConfig.UPDATE.class)  CoreUser user) {
+		System.out.println(user.getJobType0());
 		boolean success = userConsoleService.updateTemplate(user);
 		if (success) {
 			this.platformService.clearFunctionCache();
